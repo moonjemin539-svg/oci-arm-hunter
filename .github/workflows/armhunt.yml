@@ -62,6 +62,12 @@ jobs:
               cat result.json
               exit 0
             fi
+            echo "==== RESULT ===="
+cat result.json || true
+
+echo "==== ERROR ===="
+cat error.log || true
+            
           done
 
           echo "No capacity available"
