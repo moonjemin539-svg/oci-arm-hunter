@@ -1,12 +1,10 @@
-name: OCI ARM Hunter
+name: test
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
+  hello:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Test
-        run: echo "Workflow OK"
+      - run: echo hello
