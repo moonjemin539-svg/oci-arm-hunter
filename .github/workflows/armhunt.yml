@@ -1,41 +1,3 @@
-name: OCI ARM Hunter
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "*/5 * * * *"
-
-jobs:
-  hunt:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install OCI CLI
-        run: |
-          python3 -m pip install --upgrade pip
-          pip3 install oci-cli
-
-      - name: Configure OCI
-        env:
-          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.oci
-
-          echo "$OCI_PRIVATE_KEY" > ~/.oci/oci_api_key.pem
-          chmod 600 ~/.oci/oci_api_key.pem
-
-          cat > ~/.oci/config <<EOF
-          [DEFAULT]
-          user=${{ secrets.OCI_USER_OCID }}
-          fingerprint=${{ secrets.OCI_FINGERPRINT }}
-          tenancy=${{ secrets.OCI_TENANCY_OCID }}
-          region=${{ secrets.OCI_REGION }}
-          key_file=/home/runner/.oci/oci_api_key.pem
-          EOF
-
       - name: Hunt ARM Capacity
         run: |
           for AD in \
@@ -57,18 +19,22 @@ jobs:
               --metadata "{\"ssh_authorized_keys\":\"${{ secrets.OCI_SSH_KEY }}\"}" \
               > result.json 2> error.log
 
+            RC=$?
+
+            echo "Return code: $RC"
+
+            echo "==== RESULT ===="
+            cat result.json || true
+
+            echo "==== ERROR ===="
+            cat error.log || true
+
             if grep -q '"id"' result.json; then
               echo "SUCCESS"
               cat result.json
               exit 0
             fi
-            echo "==== RESULT ===="
-cat result.json || true
-
-echo "==== ERROR ===="
-cat error.log || true
-            
           done
 
           echo "No capacity available"
-          cat error.log
+          exit 1
