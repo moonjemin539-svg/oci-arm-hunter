@@ -45,7 +45,9 @@ jobs:
 
           for AD in "${ADS[@]}"
           do
+            echo "================================="
             echo "Trying $AD"
+            echo "================================="
 
             oci compute instance launch \
               --availability-domain "$AD" \
@@ -57,15 +59,20 @@ jobs:
               --display-name armtest \
               --assign-public-ip true \
               --metadata "{\"ssh_authorized_keys\":\"${{ secrets.OCI_SSH_KEY }}\"}" \
-              > result.json 2> error.log
+              > result.json 2> error.log || true
+
+            echo "===== RESULT ====="
+            cat result.json || true
+
+            echo "===== ERROR ====="
+            cat error.log || true
 
             if grep -q '"id"' result.json; then
-              echo "SUCCESS"
+              echo "🎉 SUCCESS - ARM INSTANCE CREATED"
               cat result.json
               exit 0
             fi
-
-            cat error.log || true
           done
 
+          echo "❌ No capacity available"
           exit 1
