@@ -54,7 +54,7 @@ jobs:
               --compartment-id "${{ secrets.OCI_TENANCY_OCID }}" \
               --subnet-id "${{ secrets.OCI_SUBNET_ID }}" \
               --shape VM.Standard.A1.Flex \
-              --shape-config '{"ocpus":1,"memoryInGBs":6}' \
+              --shape-config '{"ocpus":1,"memoryInGBs":12}' \
               --image-id "${{ secrets.OCI_IMAGE_ID }}" \
               --display-name armtest \
               --assign-public-ip true \
