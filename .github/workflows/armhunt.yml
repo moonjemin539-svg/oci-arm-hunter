@@ -1,40 +1,14 @@
-      - name: Hunt ARM Capacity
-        run: |
-          for AD in \
-            "LojN:US-ASHBURN-AD-1" \
-            "LojN:US-ASHBURN-AD-2" \
-            "LojN:US-ASHBURN-AD-3"
-          do
-            echo "Trying $AD"
+name: OCI ARM Hunter
 
-            oci compute instance launch \
-              --availability-domain "$AD" \
-              --compartment-id "${{ secrets.OCI_TENANCY_OCID }}" \
-              --subnet-id "${{ secrets.OCI_SUBNET_ID }}" \
-              --shape VM.Standard.A1.Flex \
-              --shape-config '{"ocpus":4,"memoryInGBs":24}' \
-              --image-id "${{ secrets.OCI_IMAGE_ID }}" \
-              --display-name armtest \
-              --assign-public-ip true \
-              --metadata "{\"ssh_authorized_keys\":\"${{ secrets.OCI_SSH_KEY }}\"}" \
-              > result.json 2> error.log
+on:
+workflow_dispatch:
 
-            RC=$?
+jobs:
+test:
+runs-on: ubuntu-latest
 
-            echo "Return code: $RC"
-
-            echo "==== RESULT ===="
-            cat result.json || true
-
-            echo "==== ERROR ===="
-            cat error.log || true
-
-            if grep -q '"id"' result.json; then
-              echo "SUCCESS"
-              cat result.json
-              exit 0
-            fi
-          done
-
-          echo "No capacity available"
-          exit 1
+```
+steps:
+  - name: Test
+    run: echo "Workflow OK"
+```
