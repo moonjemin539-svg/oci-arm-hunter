@@ -54,7 +54,7 @@ jobs:
               --compartment-id "${{ secrets.OCI_TENANCY_OCID }}" \
               --subnet-id "${{ secrets.OCI_SUBNET_ID }}" \
               --shape VM.Standard.A1.Flex \
-              --shape-config '{"ocpus":4,"memoryInGBs":24}' \
+              --shape-config '{"ocpus":1,"memoryInGBs":6}' \
               --image-id "${{ secrets.OCI_IMAGE_ID }}" \
               --display-name armtest \
               --assign-public-ip true \
@@ -75,4 +75,4 @@ jobs:
           done
 
           echo "❌ No capacity available"
-          exit 1
+          exit 0
